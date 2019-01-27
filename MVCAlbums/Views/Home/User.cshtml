@@ -1,1 +1,127 @@
-﻿<h1> User Page </h1>
+﻿@model MVCAlbums.ViewModels.UserView
+
+<h1> @Html.DisplayFor(model => model.User.Username)'s Profile Page </h1>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.User.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.User.Email)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.User.Phone)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.User.Website)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.User.Address)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.User.Company)
+        </th>
+    </tr>
+    <tr>
+        <td>
+            @Html.DisplayFor(model => model.User.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(model => model.User.Email)
+        </td>
+        <td>
+            @Html.DisplayFor(model => model.User.Phone)
+        </td>
+        <td>
+            @Html.DisplayFor(model => model.User.Website)
+        </td>
+        <td>
+            <table class="table">
+                <tr>
+                    <th style="border: none;">Street</th>
+                    <td style="border: none;">@Html.DisplayFor(model => model.User.Address.Street)</td>
+                </tr>
+                <tr>
+                    <th>Suite</th>
+                    <td>@Html.DisplayFor(model => model.User.Address.Suite)</td>
+                </tr>
+                <tr>
+                    <th>City</th>
+                    <td>@Html.DisplayFor(model => model.User.Address.City)</td>
+                </tr>
+                <tr>
+                    <th>Zipcode</th>
+                    <td>@Html.DisplayFor(model => model.User.Address.Zipcode)</td>
+                </tr>
+            </table>
+        </td>
+        <td>
+            <table class="table">
+                <tr>
+                    <th style="border: none;">Company Name</th>
+                    <td style="border: none;">@Html.DisplayFor(model => model.User.Company.Name)</td>
+                </tr>
+                <tr>
+                    <th>Company Catchphrase</th>
+                    <td>@Html.DisplayFor(model => model.User.Company.CatchPhrase)</td>
+                </tr>
+                <tr>
+                    <th>Company Bs</th>
+                    <td>@Html.DisplayFor(model => model.User.Company.Bs)</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+
+
+<h2>@Html.DisplayFor(model => model.User.Username)'s Posts </h2>
+<table class="table">
+    @foreach (var post in Model.UserPosts)
+    {
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => post.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => post.Body)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => post.Comments)
+            </th>
+        </tr>
+        <tr>
+            <td style="border: none;">
+                @Html.DisplayFor(model => post.Title)
+            </td>
+            <td style="border: none;">
+                @Html.DisplayFor(model => post.Body)
+            </td>
+            <td style="border: none;">
+                @foreach (var comment in post.Comments)
+                {
+                    <div class="table-bordered" style="margin-bottom: 10px;">
+                        <table class="table">
+                            <tr><h4 style="padding: 5px;">@Html.DisplayFor(model => comment.Name) </h4></tr>
+                            <tr>
+                                <th>Comment</th>
+                                <td>
+                                    <p>@Html.DisplayFor(model => comment.Body) </p>
+                                    <p> @Html.DisplayFor(model => comment.Email) </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th style="border: none;">Commenter's Email</th>
+                                <td style="border: none;">
+                                    <p> @Html.DisplayFor(model => comment.Email) </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                
+                }
+            </td>
+        </tr>
+     }
+</table> 
