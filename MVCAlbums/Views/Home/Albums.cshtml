@@ -1,0 +1,102 @@
+﻿@model IEnumerable<MVCAlbums.ViewModels.AlbumsView>
+
+<h1> Albums Page </h1>
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        <li class="page-item"><a class="page-link" href="~/Home/Albums/1">Previous</a></li>
+        <li class="page-item"><a class="page-link" href="~/Home/Albums/1">1</a></li>
+        <li class="page-item"><a class="page-link" href="~/Home/Albums/2">2</a></li>
+        <li class="page-item"><a class="page-link" href="~/Home/Albums/3">3</a></li>
+        <li class="page-item"><a class="page-link" href="~/Home/Albums/4">4</a></li>
+        <li class="page-item"><a class="page-link" href="~/Home/Albums/5">5</a></li>
+        <li class="page-item"><a class="page-link" href="~/Home/Albums/6">6</a></li>
+        <li class="page-item"><a class="page-link" href="~/Home/Albums/7">7</a></li>
+        <li class="page-item"><a class="page-link" href="~/Home/Albums/8">8</a></li>
+        <li class="page-item"><a class="page-link" href="~/Home/Albums/9">9</a></li>
+        <li class="page-item"><a class="page-link" href="~/Home/Albums/10">10</a></li>
+        <li class="page-item"><a class="page-link" href="/1">Next</a></li>
+    </ul>
+</nav>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.AlbumThumbnail)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AlbumTitle)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AlbumUser.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AlbumUser.Email)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AlbumUser.Phone)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AlbumUser.Address)
+        </th>
+    </tr>
+
+    @foreach (var album in Model)
+    {
+    <tr>
+        <td>
+            <img class="img-thumbnail" src="@Html.Raw(album.AlbumThumbnail)" />
+        </td>
+        <td>
+            @Html.DisplayFor(model => album.AlbumTitle)
+        </td>
+        <td>
+            @Html.DisplayFor(model => album.AlbumUser.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(model => album.AlbumUser.Email)
+        </td>
+        <td>
+            @Html.DisplayFor(model => album.AlbumUser.Phone)
+        </td>
+        <td>
+            <table class="table">
+                <tr>
+                    <th style="border: none;">Street</th>
+                    <td style="border: none;">@Html.DisplayFor(model => album.AlbumUser.Address.Street)</td>
+                </tr>
+                <tr>
+                    <th>Suite</th>
+                    <td>@Html.DisplayFor(model => album.AlbumUser.Address.Suite)</td>
+                </tr>
+                <tr>
+                    <th>City</th>
+                    <td>@Html.DisplayFor(model => album.AlbumUser.Address.City)</td>
+                </tr>
+                <tr>
+                    <th>Zipcode</th>
+                    <td>@Html.DisplayFor(model => album.AlbumUser.Address.Zipcode)</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    }
+
+</table>
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        <li class="page-item"><a class="page-link" href="~/Home/Albums/1">Previous</a></li>
+        <li class="page-item"><a class="page-link" href="~/Home/Albums/1">1</a></li>
+        <li class="page-item"><a class="page-link" href="~/Home/Albums/2">2</a></li>
+        <li class="page-item"><a class="page-link" href="~/Home/Albums/3">3</a></li>
+        <li class="page-item"><a class="page-link" href="~/Home/Albums/4">4</a></li>
+        <li class="page-item"><a class="page-link" href="~/Home/Albums/5">5</a></li>
+        <li class="page-item"><a class="page-link" href="~/Home/Albums/6">6</a></li>
+        <li class="page-item"><a class="page-link" href="~/Home/Albums/7">7</a></li>
+        <li class="page-item"><a class="page-link" href="~/Home/Albums/8">8</a></li>
+        <li class="page-item"><a class="page-link" href="~/Home/Albums/9">9</a></li>
+        <li class="page-item"><a class="page-link" href="~/Home/Albums/10">10</a></li>
+        <li class="page-item"><a class="page-link" href="/1">Next</a></li>
+    </ul>
+</nav>
