@@ -68,7 +68,8 @@ namespace MVCAlbums.Controllers
                 // Create the temp albumView to later put into albumsView list
                 var tempAlbumView = new AlbumsView
                 {
-                    AlbumTitle = album.Title
+                    AlbumTitle = album.Title,
+                    AlbumId = album.Id
                 };
 
                 // Sending request to get the user of the current album

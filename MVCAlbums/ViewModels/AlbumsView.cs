@@ -6,6 +6,7 @@ namespace MVCAlbums.ViewModels
 {
     public class AlbumsView
     {
+        public int AlbumId { get; set; }
         [DisplayName("Thumbnail")]
         public String AlbumThumbnail { get; set; }
         [DisplayName("Album Title")]

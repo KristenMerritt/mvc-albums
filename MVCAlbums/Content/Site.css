@@ -22,3 +22,31 @@ select,
 textarea {
     max-width: 280px;
 }
+
+#modal-target .album-photo-container {
+    width: 16em;
+    height: 17em;
+    display: block;
+    float: left;
+}
+
+    #modal-target .album-photo-container img {
+        display: block;
+        margin: 0 auto;
+        max-width: 150px;
+        max-height: 150px;
+    }
+
+    #modal-target .album-photo-container p {
+        display: block;
+        margin: 0 auto;
+        width: 15em;
+    }
+
+.no-border {
+    border: none;
+}
+
+.modal-dialog {
+    width: 70em;
+}

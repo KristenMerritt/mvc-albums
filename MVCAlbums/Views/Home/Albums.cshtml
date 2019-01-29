@@ -43,46 +43,67 @@
 
     @foreach (var album in Model)
     {
-    <tr>
-        <td>
-            <img class="img-thumbnail" src="@Html.Raw(album.AlbumThumbnail)" />
-        </td>
-        <td>
-            @Html.DisplayFor(model => album.AlbumTitle)
-        </td>
-        <td>
-            @Html.DisplayFor(model => album.AlbumUser.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(model => album.AlbumUser.Email)
-        </td>
-        <td>
-            @Html.DisplayFor(model => album.AlbumUser.Phone)
-        </td>
-        <td>
-            <table class="table">
-                <tr>
-                    <th style="border: none;">Street</th>
-                    <td style="border: none;">@Html.DisplayFor(model => album.AlbumUser.Address.Street)</td>
-                </tr>
-                <tr>
-                    <th>Suite</th>
-                    <td>@Html.DisplayFor(model => album.AlbumUser.Address.Suite)</td>
-                </tr>
-                <tr>
-                    <th>City</th>
-                    <td>@Html.DisplayFor(model => album.AlbumUser.Address.City)</td>
-                </tr>
-                <tr>
-                    <th>Zipcode</th>
-                    <td>@Html.DisplayFor(model => album.AlbumUser.Address.Zipcode)</td>
-                </tr>
-            </table>
-        </td>
-    </tr>
+        <tr>
+            <td>
+                <img class="img-thumbnail" src="@Html.Raw(album.AlbumThumbnail)" />
+            </td>
+            <td>
+                <a href="#" onclick="pushDataToModal(@Html.Raw(album.AlbumId));" data-toggle="modal" data-target="#myModal" data-backdrop="static">@Html.DisplayFor(model => album.AlbumTitle)</a>
+            </td>
+            <td>
+                <a href="~/Home/User/@Html.DisplayFor(model => album.AlbumUser.Id)">@Html.DisplayFor(model => album.AlbumUser.Name)</a>
+            </td>
+            <td>
+                @Html.DisplayFor(model => album.AlbumUser.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(model => album.AlbumUser.Phone)
+            </td>
+            <td>
+                <table class="table">
+                    <tr>
+                        <th class="no-border">Street</th>
+                        <td class="no-border">@Html.DisplayFor(model => album.AlbumUser.Address.Street)</td>
+                    </tr>
+                    <tr>
+                        <th>Suite</th>
+                        <td>@Html.DisplayFor(model => album.AlbumUser.Address.Suite)</td>
+                    </tr>
+                    <tr>
+                        <th>City</th>
+                        <td>@Html.DisplayFor(model => album.AlbumUser.Address.City)</td>
+                    </tr>
+                    <tr>
+                        <th>Zipcode</th>
+                        <td>@Html.DisplayFor(model => album.AlbumUser.Address.Zipcode)</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
     }
 
 </table>
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close dismiss-modal-data" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Album Photos</h4>
+            </div>
+            <div id="modal-target" class="modal-body clearfix">
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default dismiss-modal-data" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
 
 <nav aria-label="Page navigation example">
     <ul class="pagination">
