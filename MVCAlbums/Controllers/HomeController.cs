@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using MVCAlbums.Models;
@@ -15,6 +16,8 @@ namespace MVCAlbums.Controllers
     public class HomeController : Controller
     {
         private static HttpClient _client;
+        private static List<Album> _allAlbums;
+        private static IEnumerable<User> _allUsers;
 
         public HomeController()
         {
@@ -35,52 +38,78 @@ namespace MVCAlbums.Controllers
             return View();
         }
 
-        // ALBUMS VIEW
-        public async Task<ActionResult> Albums(int id = 1)
+        private async Task LoadAlbumsAndUsers()
         {
+            if (_allAlbums != null && _allAlbums.Any() && _allUsers != null && _allUsers.Any()) return;
+
+            _allAlbums = (await GetMultiData<Album>("albums")).ToList();
+            _allUsers = (await GetMultiData<User>("users")).ToList();
+            
+            foreach (var album in _allAlbums)
+            {
+                album.User = _allUsers.FirstOrDefault(x => x.Id == album.UserId);
+            }
+        }
+        
+        // ALBUMS VIEW
+        public async Task<ActionResult> Albums(int id = 1, string searchParam = null, bool isPartial = false)
+        {
+            var pageNumber = id;
+
+            // Get initial list of albums
+            await LoadAlbumsAndUsers();
+
             // Used to send data to Album page
             var albumsViews = new List<AlbumsView>();
 
-            // Get initial list of albums
-            var albums = GetMultiData<Album>("albums").Result ?? throw new ArgumentNullException("GetMultiData<Album>(\"albums\").Result");
+            var albumList = !string.IsNullOrWhiteSpace(searchParam)
+                ? _allAlbums.Where(x =>
+                    x.Title.ToLower().Contains(searchParam.ToLower()) ||
+                    x.User.Name.ToLower().Contains(searchParam.ToLower())).ToList()
+                : _allAlbums;
 
             // Used for pagination 
             var start = 1;
             var end = 10;
 
-            if (id != 1)
+            if (pageNumber != 1)
             {
-                start = ((id * 10) + 1) - 10;
+                start = ((pageNumber * 10) + 1) - 10;
                 end = start + 10;
             }
 
             // Iterate through albums for pagination
-            for(var i = start-1; i < end; i++)
+            for (var i = start - 1; i < end; i++)
             {
-                if (i > albums.Count() - 1) continue;
-                var album = albums.ElementAt(i);
+                if (i > albumList.Count() - 1) continue;
+                var album = albumList.ElementAt(i);
 
                 // Create the temp albumView to later put into albumsView list
                 var tempAlbumView = new AlbumsView
                 {
                     AlbumTitle = album.Title,
-                    AlbumId = album.Id
+                    AlbumId = album.Id,
+                    SearchParam = searchParam
                 };
 
                 // Put user and first thumbnail data into temp albumView
-                var tempUserData = GetSingleData<User>("users/" + album.UserId + "/").Result ?? throw new ArgumentNullException("GetSingleData<User>(\"users / \" + album.UserId + \" / \").Result");
-                var tempPhoto = GetMultiData<Photo>("photos?albumId=" + album.Id).Result.First() ?? throw new ArgumentNullException("photos?albumId=\" + album.Id).Result.First()");
+                
+                var tempUserData = album.User
+                                   ?? throw new ArgumentNullException("GetSingleData<User>(\"users / \" + album.UserId + \" / \").Result");
+                var tempPhoto = (await GetMultiData<Photo>("photos?albumId=" + album.Id)).First() 
+                                ?? throw new ArgumentNullException("photos?albumId=\" + album.Id).Result.First()");
 
                 tempAlbumView.AlbumUser = (User)tempUserData;
                 tempAlbumView.AlbumThumbnail = tempPhoto.ThumbnailUrl;
                 albumsViews.Add(tempAlbumView);
             }
 
-            // Send album data to the view
+            if (isPartial)
+            {
+                return PartialView("_AlbumListPartial", albumsViews);
+            }
             return View(albumsViews);
         }
-
-
 
         // USER VIEW
         public async Task<ActionResult> User(int id = 1)
@@ -124,38 +153,6 @@ namespace MVCAlbums.Controllers
             userView.UserPosts = posts;
 
             return View(userView);
-        }
-
-        public async Task<ActionResult> Search(string searchParam)
-        {
-            var user = (User) GetSingleData<User>("users?name=" + searchParam).Result;
-
-            if (!user.Equals(null))
-            {
-                Response.Redirect("~/Home/User/" + user.Id);
-                return null;
-            }
-
-            var albumView = new AlbumsView();
-
-            var album = (Album) GetSingleData<Album>("albums?title=" + searchParam).Result;
-
-            if (album.Equals(null)) return null;
-
-            albumView.AlbumId = album.Id;
-            albumView.AlbumTitle = album.Title;
-
-            var userData = (User) GetSingleData<User>("users/" + album.UserId + "/").Result ??
-                           throw new ArgumentNullException(
-                               "GetSingleData<User>(\"users / \" + album.UserId + \" / \").Result");
-            var thumbnail = (Photo) GetMultiData<Photo>("photos?albumId=" + album.Id).Result.First() ??
-                            throw new ArgumentNullException("photos?albumId=\" + album.Id).Result.First()");
-
-            albumView.AlbumUser = userData;
-            albumView.AlbumThumbnail = thumbnail.ThumbnailUrl;
-
-            return View(albumView);
-
         }
 
         // HELPER FUNCTION GET MULTI DATA

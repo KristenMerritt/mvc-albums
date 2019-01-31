@@ -12,5 +12,6 @@ namespace MVCAlbums.ViewModels
         [DisplayName("Album Title")]
         public String AlbumTitle { get; set; }
         public User AlbumUser { get; set; }
+        public string SearchParam { get; set; }
     }
 }

@@ -1,0 +1,82 @@
+﻿@model IEnumerable<MVCAlbums.ViewModels.AlbumsView>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.AlbumThumbnail)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AlbumTitle)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AlbumUser.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AlbumUser.Email)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AlbumUser.Phone)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AlbumUser.Address)
+        </th>
+    </tr>
+
+    @foreach (var album in Model)
+    {
+        <tr>
+            <td>
+                <img class="img-thumbnail" src="@Html.Raw(album.AlbumThumbnail)" />
+            </td>
+            <td>
+                <a href="#" onclick="pushDataToModal(@Html.Raw(album.AlbumId));" data-toggle="modal" data-target="#myModal" data-backdrop="static">@Html.DisplayFor(model => album.AlbumTitle)</a>
+            </td>
+            <td>
+                <a href="~/Home/User/@Html.DisplayFor(model => album.AlbumUser.Id)">@Html.DisplayFor(model => album.AlbumUser.Name)</a>
+            </td>
+            <td>
+                @Html.DisplayFor(model => album.AlbumUser.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(model => album.AlbumUser.Phone)
+            </td>
+            <td>
+                <table class="table address-table">
+                    <tr>
+                        <th class="no-border">Street</th>
+                        <td class="no-border">@Html.DisplayFor(model => album.AlbumUser.Address.Street)</td>
+                    </tr>
+                    <tr>
+                        <th>Suite</th>
+                        <td>@Html.DisplayFor(model => album.AlbumUser.Address.Suite)</td>
+                    </tr>
+                    <tr>
+                        <th>City</th>
+                        <td>@Html.DisplayFor(model => album.AlbumUser.Address.City)</td>
+                    </tr>
+                    <tr>
+                        <th>Zipcode</th>
+                        <td>@Html.DisplayFor(model => album.AlbumUser.Address.Zipcode)</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    }
+
+</table>
+
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination mt-4 mb-4">
+        <li class="page-item"><a class="page-link" href="@Url.Action("Albums", new { id = 1, searchParam = Model.FirstOrDefault()?.SearchParam})">1</a></li>
+        <li class="page-item"><a class="page-link" href="@Url.Action("Albums", new { id = 2, searchParam = Model.FirstOrDefault()?.SearchParam})">2</a></li>
+        <li class="page-item"><a class="page-link" href="@Url.Action("Albums", new { id = 3, searchParam = Model.FirstOrDefault()?.SearchParam})">3</a></li>
+        <li class="page-item"><a class="page-link" href="@Url.Action("Albums", new { id = 4, searchParam = Model.FirstOrDefault()?.SearchParam})">4</a></li>
+        <li class="page-item"><a class="page-link" href="@Url.Action("Albums", new { id = 5, searchParam = Model.FirstOrDefault()?.SearchParam})">5</a></li>
+        <li class="page-item"><a class="page-link" href="@Url.Action("Albums", new { id = 6, searchParam = Model.FirstOrDefault()?.SearchParam})">6</a></li>
+        <li class="page-item"><a class="page-link" href="@Url.Action("Albums", new { id = 7, searchParam = Model.FirstOrDefault()?.SearchParam})">7</a></li>
+        <li class="page-item"><a class="page-link" href="@Url.Action("Albums", new { id = 8, searchParam = Model.FirstOrDefault()?.SearchParam})">8</a></li>
+        <li class="page-item"><a class="page-link" href="@Url.Action("Albums", new { id = 9, searchParam = Model.FirstOrDefault()?.SearchParam})">9</a></li>
+        <li class="page-item"><a class="page-link" href="@Url.Action("Albums", new { id = 10, searchParam = Model.FirstOrDefault()?.SearchParam})">10</a></li>
+    </ul>
+</nav>
