@@ -129,7 +129,6 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Extensions\HtmlExtensions.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -143,6 +142,7 @@
     <Compile Include="Models\Todo.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities\PaginationHelper.cs" />
     <Compile Include="ViewModels\AlbumsView.cs" />
     <Compile Include="ViewModels\UserView.cs" />
   </ItemGroup>

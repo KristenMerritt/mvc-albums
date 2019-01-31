@@ -1,11 +1,12 @@
-﻿@model IEnumerable<MVCAlbums.ViewModels.AlbumsView>
+﻿@model MVCAlbums.Utilities.PagedResult<MVCAlbums.ViewModels.AlbumsView>
 
 <h1 class="m-3">Albums</h1>
 
 @using (Html.BeginForm("Albums", "Home", FormMethod.Get, new { id = "searchForm" }))
 {
-    @Html.TextBox("searchParam", null, new { @class = "form-control mt-1 mb-4 mr-2", placeholder = "Album or User Name" })
-    @Html.Hidden("id", 1)
+    @Html.TextBox("searchParam", null, new { @class = "form-control mt-1 mb-4 mr-2", placeholder = "Search by Album or User's Name" })
+    @Html.Hidden("skip", 0)
+    @Html.Hidden("take", 10)
     @Html.Hidden("isPartial", true)
     <button class="btn btn-success float-left mt-1 mb-4" type="submit">Search</button>
 }
@@ -37,15 +38,12 @@
 
 @section scripts {
     <script>
-        (function() {
+        (function () {
             "use strict";
-
             var body = $("body");
 
-            body.on("submit", "#searchForm", function(e) {
+            body.on("submit", "#searchForm", function (e) {
                 e.preventDefault();
-
-
                 var form = $("#searchForm");
 
                 $.get(form.attr("action"),
@@ -53,14 +51,7 @@
                     function (resp) {
                         $("#album-list").html(resp);
                     });
-
-
-
-                console.log("search the things");
-
             });
-
-
         })();
     </script>
 }
