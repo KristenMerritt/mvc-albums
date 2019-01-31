@@ -93,7 +93,7 @@
                 <div class="col-12 border border-secondary rounded">
                     <p class="font-weight-bold m-3">@Html.DisplayFor(model => post.Title)</p>
                     <p class="m-3">@Html.DisplayFor(model => post.Body)</p>
-                    <p class="lead m-3">Comments <a class="btn btn-sm btn-success" data-toggle="collapse" href=".collapse_@Html.DisplayFor(model => post.Id)" role="button" aria-expanded="false" aria-controls="collapseExample">&#187;</a></p>
+                    <a data-toggle="collapse" href=".collapse_@Html.DisplayFor(model => post.Id)" role="button" aria-expanded="false" aria-controls="collapseExample"><p class="lead m-3">Show/Hide Comments</p></a>
                     @foreach (var comment in post.Comments)
                     {
                     <div class="container border border-secondary mb-3 rounded collapse_@Html.DisplayFor(model => post.Id) collapse">
