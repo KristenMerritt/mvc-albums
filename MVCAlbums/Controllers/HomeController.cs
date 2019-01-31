@@ -23,30 +23,26 @@ namespace MVCAlbums.Controllers
             // Define request
             _client = new HttpClient
             {
-                BaseAddress = new Uri("https://jsonplaceholder.typicode.com/")
+                BaseAddress = new Uri("http://jsonplaceholder.typicode.com/")
             };
             _client.DefaultRequestHeaders.Clear();
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
+        // INDEX VIEW
         public ActionResult Index()
         {
             return View();
         }
 
+        // ALBUMS VIEW
         public async Task<ActionResult> Albums(int id = 1)
         {
-            // List to store data to send to Albums page
+            // Used to send data to Album page
             var albumsViews = new List<AlbumsView>();
 
-            // Sending request to get all albums  
-            var albumsResponse = await _client.GetAsync("albums");
-
-            // Checking to see if the response is successful or not
-            if (!albumsResponse.IsSuccessStatusCode) return View(albumsViews);
-
-            // Deserializing the response received from web api and storing into Albums list  
-            var albums = JsonConvert.DeserializeObject<List<Album>>(await albumsResponse.Content.ReadAsStringAsync());
+            // Get initial list of albums
+            var albums = GetMultiData<Album>("albums").Result ?? throw new ArgumentNullException("GetMultiData<Album>(\"albums\").Result");
 
             // Used for pagination 
             var start = 1;
@@ -58,12 +54,11 @@ namespace MVCAlbums.Controllers
                 end = start + 10;
             }
 
+            // Iterate through albums for pagination
             for(var i = start-1; i < end; i++)
             {
-                // Make sure we do not go over the albums count during pagination
                 if (i > albums.Count() - 1) continue;
-
-                var album = albums[i];
+                var album = albums.ElementAt(i);
 
                 // Create the temp albumView to later put into albumsView list
                 var tempAlbumView = new AlbumsView
@@ -72,27 +67,12 @@ namespace MVCAlbums.Controllers
                     AlbumId = album.Id
                 };
 
-                // Sending request to get the user of the current album
-                var userResponse = await _client.GetAsync("users/" + album.UserId + "/");
+                // Put user and first thumbnail data into temp albumView
+                var tempUserData = GetSingleData<User>("users/" + album.UserId + "/").Result ?? throw new ArgumentNullException("GetSingleData<User>(\"users / \" + album.UserId + \" / \").Result");
+                var tempPhoto = GetMultiData<Photo>("photos?albumId=" + album.Id).Result.First() ?? throw new ArgumentNullException("photos?albumId=\" + album.Id).Result.First()");
 
-                if (userResponse.IsSuccessStatusCode)
-                {
-                    // Put data received into temp albumView
-                    var tempUserData = JsonConvert.DeserializeObject<User>(await userResponse.Content.ReadAsStringAsync());
-                    tempAlbumView.AlbumUser = tempUserData;
-                }
-
-                // Sending request to get the first photo of the current album
-                var photoResponse = await _client.GetAsync("photos?albumId=" + album.Id);
-
-                if (photoResponse.IsSuccessStatusCode)
-                {
-                    // Put data received into temp albumView
-                    var tempPhoto = JsonConvert.DeserializeObject<List<Photo>>(await photoResponse.Content.ReadAsStringAsync()).First();         
-                    tempAlbumView.AlbumThumbnail = tempPhoto.ThumbnailUrl;
-                }
-
-                // Add the tempAlbumView into list to send to View
+                tempAlbumView.AlbumUser = (User)tempUserData;
+                tempAlbumView.AlbumThumbnail = tempPhoto.ThumbnailUrl;
                 albumsViews.Add(tempAlbumView);
             }
 
@@ -100,6 +80,9 @@ namespace MVCAlbums.Controllers
             return View(albumsViews);
         }
 
+
+
+        // USER VIEW
         public async Task<ActionResult> User(int id = 1)
         {
             Debug.WriteLine("Getting User: " + id );
@@ -143,34 +126,89 @@ namespace MVCAlbums.Controllers
             return View(userView);
         }
 
-        //private async Task<IEnumerable<T>> GetData<T>(string url)
-        //{
-        //    System.Diagnostics.Debug.WriteLine("In call method");
-        //    Client.BaseAddress = new Uri(BaseUrl);
-        //    Client.DefaultRequestHeaders.Clear();
+        public async Task<ActionResult> Search(string searchParam)
+        {
+            var user = (User) GetSingleData<User>("users?name=" + searchParam).Result;
 
-        //    //Define request data format  
-        //    Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //    System.Diagnostics.Debug.WriteLine("Awaiting Response");
-        //    //Sending request to find web api REST service resource GetAllEmployees using HttpClient  
-        //    HttpResponseMessage Res = await Client.GetAsync(url);
-        //    System.Diagnostics.Debug.WriteLine("Got Async Response");
-        //    //Checking the response is successful or not which is sent using HttpClient  
-        //    if (Res.IsSuccessStatusCode)
-        //    {
-        //        System.Diagnostics.Debug.WriteLine("Success Code Recieved");
-        //        //Storing the response details recieved from web api   
-        //        var Response = await Res.Content.ReadAsStringAsync();
+            if (!user.Equals(null))
+            {
+                Response.Redirect("~/Home/User/" + user.Id);
+                return null;
+            }
 
-        //        //Deserializing the response recieved from web api and storing into the Employee list
+            var albumView = new AlbumsView();
 
-        //        return JsonConvert.DeserializeObject<IEnumerable<T>>(Response);
-        //    }
-        //    else
-        //    {
-        //        System.Diagnostics.Debug.WriteLine("No Success Code Recieved");
-        //        return null;
-        //    }
-        //}
+            var album = (Album) GetSingleData<Album>("albums?title=" + searchParam).Result;
+
+            if (album.Equals(null)) return null;
+
+            albumView.AlbumId = album.Id;
+            albumView.AlbumTitle = album.Title;
+
+            var userData = (User) GetSingleData<User>("users/" + album.UserId + "/").Result ??
+                           throw new ArgumentNullException(
+                               "GetSingleData<User>(\"users / \" + album.UserId + \" / \").Result");
+            var thumbnail = (Photo) GetMultiData<Photo>("photos?albumId=" + album.Id).Result.First() ??
+                            throw new ArgumentNullException("photos?albumId=\" + album.Id).Result.First()");
+
+            albumView.AlbumUser = userData;
+            albumView.AlbumThumbnail = thumbnail.ThumbnailUrl;
+
+            return View(albumView);
+
+        }
+
+        // HELPER FUNCTION GET MULTI DATA
+        private async Task<IEnumerable<T>> GetMultiData<T>(string url)
+        {
+            Debug.WriteLine("In call method");
+
+            // Sending request
+            try
+            {
+                var res = await _client.GetAsync(url).ConfigureAwait(false);
+                Debug.WriteLine("Got Async Response");
+                // Checking the response is successful or not which is sent using HttpClient  
+                if (res.IsSuccessStatusCode)
+                {
+                    Debug.WriteLine("Success Code Received");
+                    // Storing the response details received from web api   
+                    var response = await res.Content.ReadAsStringAsync();
+
+                    // Deserializing the response received from web api and storing into the Employee list
+                    return JsonConvert.DeserializeObject<IEnumerable<T>>(response);
+                }
+                Debug.WriteLine("No Success Code Received");
+                return null;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("broke"); 
+            }
+
+            return null;
+        }
+
+        // HELPER FUNCTION GET SINGLE DATA
+        private async Task<Object> GetSingleData<T>(string url)
+        {
+            Debug.WriteLine("In call method");
+
+            // Sending request
+            var res = await _client.GetAsync(url).ConfigureAwait(false);
+            Debug.WriteLine("Got Async Response");
+            // Checking the response is successful or not which is sent using HttpClient  
+            if (res.IsSuccessStatusCode)
+            {
+                Debug.WriteLine("Success Code Received");
+                // Storing the response details received from web api   
+                var response = await res.Content.ReadAsStringAsync();
+
+                // Deserializing the response received from web api and storing into the Employee list
+                return JsonConvert.DeserializeObject<T>(response);
+            }
+            Debug.WriteLine("No Success Code Received");
+            return null;
+        }
     }
 }

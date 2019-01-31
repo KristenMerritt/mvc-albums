@@ -23,8 +23,9 @@ namespace MVCAlbums
                       "~/Scripts/Custom.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
-                      "~/Content/bootstrap.css",
-                      "~/Content/site.css"));
+                "~/Content/bootstrap-grid.min.css", 
+                "~/Content/bootstrap.min.css",
+                "~/Content/site.css"));
         }
     }
 }

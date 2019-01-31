@@ -1,10 +1,9 @@
 ﻿@model IEnumerable<MVCAlbums.ViewModels.AlbumsView>
 
-<h1> Albums Page </h1>
+<h1 class="m-3">Albums</h1>
 
 <nav aria-label="Page navigation example">
-    <ul class="pagination">
-        <li class="page-item"><a class="page-link" href="~/Home/Albums/1">Previous</a></li>
+    <ul class="pagination mt-4 mb-4">
         <li class="page-item"><a class="page-link" href="~/Home/Albums/1">1</a></li>
         <li class="page-item"><a class="page-link" href="~/Home/Albums/2">2</a></li>
         <li class="page-item"><a class="page-link" href="~/Home/Albums/3">3</a></li>
@@ -15,9 +14,13 @@
         <li class="page-item"><a class="page-link" href="~/Home/Albums/8">8</a></li>
         <li class="page-item"><a class="page-link" href="~/Home/Albums/9">9</a></li>
         <li class="page-item"><a class="page-link" href="~/Home/Albums/10">10</a></li>
-        <li class="page-item"><a class="page-link" href="/1">Next</a></li>
     </ul>
 </nav>
+
+<form class="form-inline">
+    <input id="searchParam" class="form-control mt-1 mb-4 mr-2" type="text" placeholder="Album or User Name" aria-label="Search"> 
+    @*<a class="btn btn-success float-left mt-1 mb-4" href="@Url.Action("Search","HomeController", new {searchParam= })">Search</a>*@
+</form>
 
 <table class="table">
     <tr>
@@ -60,7 +63,7 @@
                 @Html.DisplayFor(model => album.AlbumUser.Phone)
             </td>
             <td>
-                <table class="table">
+                <table class="table address-table">
                     <tr>
                         <th class="no-border">Street</th>
                         <td class="no-border">@Html.DisplayFor(model => album.AlbumUser.Address.Street)</td>
@@ -95,7 +98,7 @@
                 <h4 class="modal-title">Album Photos</h4>
             </div>
             <div id="modal-target" class="modal-body clearfix">
-                
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default dismiss-modal-data" data-dismiss="modal">Close</button>
@@ -106,8 +109,7 @@
 </div>
 
 <nav aria-label="Page navigation example">
-    <ul class="pagination">
-        <li class="page-item"><a class="page-link" href="~/Home/Albums/1">Previous</a></li>
+    <ul class="pagination mt-4 mb-4">
         <li class="page-item"><a class="page-link" href="~/Home/Albums/1">1</a></li>
         <li class="page-item"><a class="page-link" href="~/Home/Albums/2">2</a></li>
         <li class="page-item"><a class="page-link" href="~/Home/Albums/3">3</a></li>
@@ -118,6 +120,5 @@
         <li class="page-item"><a class="page-link" href="~/Home/Albums/8">8</a></li>
         <li class="page-item"><a class="page-link" href="~/Home/Albums/9">9</a></li>
         <li class="page-item"><a class="page-link" href="~/Home/Albums/10">10</a></li>
-        <li class="page-item"><a class="page-link" href="/1">Next</a></li>
     </ul>
 </nav>

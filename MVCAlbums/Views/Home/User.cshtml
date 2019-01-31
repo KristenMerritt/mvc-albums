@@ -1,6 +1,6 @@
 ﻿@model MVCAlbums.ViewModels.UserView
 
-<h1> @Html.DisplayFor(model => model.User.Username)'s Profile Page </h1>
+<h1 class="m-3">@Html.DisplayFor(model => model.User.Username)'s Profile Page</h1>
 
 <table class="table">
     <tr>
@@ -39,8 +39,8 @@
         <td>
             <table class="table">
                 <tr>
-                    <th style="border: none;">Street</th>
-                    <td style="border: none;">@Html.DisplayFor(model => model.User.Address.Street)</td>
+                    <th class="no-border">Street</th>
+                    <td class="no-border">@Html.DisplayFor(model => model.User.Address.Street)</td>
                 </tr>
                 <tr>
                     <th>Suite</th>
@@ -59,8 +59,8 @@
         <td>
             <table class="table">
                 <tr>
-                    <th style="border: none;">Company Name</th>
-                    <td style="border: none;">@Html.DisplayFor(model => model.User.Company.Name)</td>
+                    <th class="no-border">Company Name</th>
+                    <td class="no-border">@Html.DisplayFor(model => model.User.Company.Name)</td>
                 </tr>
                 <tr>
                     <th>Company Catchphrase</th>
@@ -80,48 +80,23 @@
 <table class="table">
     @foreach (var post in Model.UserPosts)
     {
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => post.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => post.Body)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => post.Comments)
-            </th>
-        </tr>
-        <tr>
-            <td style="border: none;">
-                @Html.DisplayFor(model => post.Title)
-            </td>
-            <td style="border: none;">
-                @Html.DisplayFor(model => post.Body)
-            </td>
-            <td style="border: none;">
-                @foreach (var comment in post.Comments)
-                {
-                    <div class="table-bordered" style="margin-bottom: 10px;">
-                        <table class="table">
-                            <tr><h4 style="padding: 5px;">@Html.DisplayFor(model => comment.Name) </h4></tr>
-                            <tr>
-                                <th>Comment</th>
-                                <td>
-                                    <p>@Html.DisplayFor(model => comment.Body) </p>
-                                    <p> @Html.DisplayFor(model => comment.Email) </p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th style="border: none;">Commenter's Email</th>
-                                <td style="border: none;">
-                                    <p> @Html.DisplayFor(model => comment.Email) </p>
-                                </td>
-                            </tr>
-                        </table>
+        <div class="container">
+            <div class="row mb-3">
+                <div class="col-12 border border-secondary rounded">
+                    <p class="font-weight-bold m-3">@Html.DisplayFor(model => post.Title)</p>
+                    <p class="m-3">@Html.DisplayFor(model => post.Body)</p>
+                    <p class="lead m-3">Comments <a class="btn btn-sm btn-success" data-toggle="collapse" href=".collapse_@Html.DisplayFor(model => post.Id)" role="button" aria-expanded="false" aria-controls="collapseExample">&#187;</a></p>
+                    @foreach (var comment in post.Comments)
+                    {
+                    <div class="container border border-secondary mb-3 rounded collapse_@Html.DisplayFor(model => post.Id) collapse">
+                        <p class="font-weight-bolder m-3">@Html.DisplayFor(model => comment.Name)</p>
+                        <p class="m-3">@Html.DisplayFor(model => comment.Body)</p>
+                        <footer class="blockquote-footer m-3"><cite title="@Html.DisplayFor(model => comment.Email)">@Html.DisplayFor(model => comment.Email)</cite></footer>
                     </div>
                 
-                }
-            </td>
-        </tr>
+                    }
+                </div>
+            </div>
+        </div>
      }
 </table> 
