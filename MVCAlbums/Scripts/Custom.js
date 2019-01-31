@@ -1,4 +1,5 @@
-﻿function pushDataToModal(albumId)
+﻿// Gets data for modal / opens modal
+function pushDataToModal(albumId)
 {
     $.ajax({
         contentType: 'application/json',
@@ -22,6 +23,7 @@
     });
 }
 
+// Closes and removes data from modal
 $('.dismiss-modal-data').click(function (e) {
     var modalContent = document.getElementById("modal-target");
     var cNode = modalContent.cloneNode(false);

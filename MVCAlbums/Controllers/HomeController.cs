@@ -20,7 +20,7 @@ namespace MVCAlbums.Controllers
         private static IEnumerable<User> _allUsers;
 
         /// <summary>
-        /// 
+        /// Instantiates the http client used for http requests
         /// </summary>
         public HomeController()
         {
@@ -36,18 +36,20 @@ namespace MVCAlbums.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Returns to the index page
         /// </summary>
-        /// <returns></returns>
+        /// <returns> Main View </returns>
         public ActionResult Index()
         {
             return View();
         }
 
         /// <summary>
-        /// 
+        /// Front loads all of the albums and users for use
+        /// during pagination / searching as the api
+        /// does not provide functionality for this.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>All album and user data</returns>
         private async Task LoadAlbumsAndUsers()
         {
             if (_allAlbums != null && _allAlbums.Any() && _allUsers != null && _allUsers.Any()) return;
@@ -62,21 +64,22 @@ namespace MVCAlbums.Controllers
         }
         
         /// <summary>
-        /// 
+        /// Main functionality for Albums page,
+        /// accounts for pagination and search
         /// </summary>
-        /// <param name="skip"></param>
-        /// <param name="take"></param>
-        /// <param name="searchParam"></param>
-        /// <param name="isPartial"></param>
-        /// <returns></returns>
+        /// <param name="skip">Number of items to skip for pagination</param>
+        /// <param name="take">Number of items to take in for pagination</param>
+        /// <param name="searchParam">Used when filtering search results</param>
+        /// <param name="isPartial">If true, return the partial page</param>
+        /// <returns>Album paged view</returns>
         public async Task<ActionResult> Albums(int skip = 0, int take = 10, string searchParam = null, bool isPartial = false)
         {
-            // Get initial list of albums
+            // Get initial list of albums if we have not already
             await LoadAlbumsAndUsers();
 
-            // Used to send data to Album page
             var albumsViews = new List<AlbumsView>();
 
+            // Search functionality
             var albumList = !string.IsNullOrWhiteSpace(searchParam)
                 ? _allAlbums.Where(x =>
                     x.Title.ToLower().Contains(searchParam.ToLower()) ||
@@ -88,7 +91,6 @@ namespace MVCAlbums.Controllers
             // Used for pagination 
             albumList = albumList.Skip(skip).Take(take).ToList();
 
-            // Iterate through albums for pagination
             foreach(var album in albumList)
             {
                 // Create the temp albumView to later put into albumsView list
@@ -96,16 +98,14 @@ namespace MVCAlbums.Controllers
                 {
                     AlbumTitle = album.Title,
                     AlbumId = album.Id,
-                    SearchParam = searchParam
+                    SearchParam = searchParam,
+                    AlbumUser = album.User
                 };
 
-                // Put user and first thumbnail data into temp albumView
-                var tempUserData = album.User
-                                   ?? throw new ArgumentNullException("GetSingleData<User>(\"users / \" + album.UserId + \" / \").Result");
+                // Getting the first photo of the album
                 var tempPhoto = (await GetMultiData<Photo>("photos?albumId=" + album.Id)).First() 
                                 ?? throw new ArgumentNullException("photos?albumId=\" + album.Id).Result.First()");
 
-                tempAlbumView.AlbumUser = (User)tempUserData;
                 tempAlbumView.AlbumThumbnail = tempPhoto.ThumbnailUrl;
                 albumsViews.Add(tempAlbumView);
             }
@@ -127,26 +127,24 @@ namespace MVCAlbums.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Main functionality for User page
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <param name="id">ID of the user</param>
+        /// <returns>User view</returns>
         public async Task<ActionResult> User(int id = 1)
         {
-            var userView = new UserView();
-            
-            // Get the user based off of user id
-            var user = (User)(await GetSingleData<User>("users/" + id + "/"));
-            userView.User = user;
+            var userView = new UserView
+            {
+                User = (User) (await GetSingleData<User>("users/" + id + "/"))
+            };
 
-            // Get posts data of the user
+            // Get the post data of the user
             var posts = (await GetMultiData<Post>("posts?userId=" + id)).ToList();
 
             foreach (var post in posts)
             {
                 // Get comments of the post
-                var postComments = (await GetMultiData<Comment>("comments?postId=" + post.Id)).ToList();
-                post.Comments = postComments;
+                post.Comments = (await GetMultiData<Comment>("comments?postId=" + post.Id)).ToList();
             }
 
             userView.UserPosts = posts;
@@ -155,11 +153,11 @@ namespace MVCAlbums.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Retrieves data from the web api
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="url"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">Generic</typeparam>
+        /// <param name="url">Specific endpoint to call for data</param>
+        /// <returns>Data collected from endpoint in Task</returns>
         private async Task<IEnumerable<T>> GetMultiData<T>(string url)
         {
             try
@@ -182,11 +180,11 @@ namespace MVCAlbums.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Retrieves datum from the web api
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="url"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">Generic</typeparam>
+        /// <param name="url">Specific endpoint to call for data</param>
+        /// <returns>Data collected from endpoint in Task</returns>
         private async Task<Object> GetSingleData<T>(string url)
         {
             try

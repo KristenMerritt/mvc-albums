@@ -54,6 +54,14 @@
                     <th>Zipcode</th>
                     <td>@Html.DisplayFor(model => model.User.Address.Zipcode)</td>
                 </tr>
+                <tr>
+                    <th>Latitude</th>
+                    <td>Lat: @Html.DisplayFor(model => model.User.Address.Geo.Lat)</td>
+                </tr>
+                <tr>
+                    <th>Longitude</th>
+                    <td>Lng: @Html.DisplayFor(model => model.User.Address.Geo.Lng)</td>
+                </tr>
             </table>
         </td>
         <td>

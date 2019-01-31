@@ -22,24 +22,28 @@ textarea {
     max-width: 280px;
 }
 
-#modal-target .album-photo-container {
-    width: 16em;
-    height: 17em;
-    display: block;
-    float: left;
+.modal-dialog {
+    max-width: 65em;
 }
 
-    #modal-target .album-photo-container img {
-        display: block;
-        margin: 0 auto;
-        max-width: 150px;
-        max-height: 150px;
-    }
+.album-photo-container {
+    display: block;
+    width: 20em;
+    height: 20em;
+    float: left;
+    margin: 0 auto;
+}
 
-    #modal-target .album-photo-container p {
-        display: block;
+.album-photo-container img {
+    display: block;
+    width: 14em;
+    height: 14em;
+    margin: 0 auto;
+}
+
+    .album-photo-container p {
+        width: 14em;
         margin: 0 auto;
-        width: 15em;
     }
 
 .no-border {
